@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const usersController = require('./usersController');
 
-router.get('/', async function(req, res) {
-  const users = await db.User.findAll();
 
-  res.render('login', { title: 'Docker-Node.js', content: users });
-});
+router.get('/', usersController.index);
 
 module.exports = router;
