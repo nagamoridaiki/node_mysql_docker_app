@@ -4,8 +4,8 @@ const db = require('../models');
 
 /* GET home page. */
 router.get('/', async function(req, res) {
-  const tasks = await db.Task.findAll();
-  res.render('index', { title: 'Docker-Node.js', tasks });
+  const users = await db.User.findAll();
+  res.render('login', { title: 'Docker-Node.js', content: users });
 });
 
 router.post('/create', async function(req, res) {
