@@ -10,6 +10,20 @@ module.exports = {
         const users = await db.User.findAll();
         res.render('login', { title: 'Docker-Node.js', content: users });
     },
+    show: async (req, res, next) => {
+      await db.User.findOne({
+        where:{
+          email:req.body.email,
+          password:req.body.password,
+        }
+      }).then(usr=>{
+        var data = {
+          title: 'ログインしました！',
+          content: usr
+        }
+        res.render('show', data);
+      })
+    },
     apiAuthenticate: async (req, res, next) => {
       await db.User.findOne({
             where:{
@@ -25,30 +39,15 @@ module.exports = {
               }
               console.log("payload", payload)//{ id: 1, name: 'Taro', password: 'yamada' }
               var token = jsonWebToken.sign(payload, 'secret');
-
               
-              jsonWebToken.verify(token, "secret", (errors, payload) => {
-                console.log("payload2", payload.id)
-                
-                if (payload) {
-                  console.log("OK! VERIFY JWT TOKEN", payload)
-                } else {
-                  res.status(httpStatus.UNAUTHORIZED).json({
-                    error: true,
-                    message: "Cannot verify API token."
-                  });
-                  next();
-                }
-              });
-
-              /*
               // トークンを返します。
               res.json({
                 success: true,
                 msg: "Authentication successfully finished",
                 token: token
               });
-              next();*/
+              next()
+
             } else {
               var data = {
                 title:'Users/Login',
@@ -58,7 +57,26 @@ module.exports = {
             }
         })
     },
+    verifyJWT: (req, res, next) => {
 
+      var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-
+      if (token) {
+        jsonWebToken.verify(token, 'secret', function(error, decoded) {
+          if (error) {
+            return res.json({ success: false, message: 'トークンの認証に失敗しました。' });
+          } else {
+            // 認証に成功したらdecodeされた情報をrequestに保存する
+            req.decoded = decoded;
+            next();
+          }
+        })
+      } else {
+        return res.status(403).send({
+            success: false,
+            message: 'トークンがありません。',
+        });
+      }
+    }
+      
 }

@@ -3,16 +3,18 @@ const { use } = require('../app');
 const router = express.Router();
 const db = require('../models');
 const usersController = require('./usersController');
+const apiRoutes = require("./apiRoutes");
 
 /* GET home page. *//*
 router.get('/', async function(req, res) {
   const users = await db.User.findAll();
   res.render('login', { title: 'Docker-Node.js', content: users });
 });*/
+router.use("/api", apiRoutes);
 
 router.get('/', usersController.index);
+router.post('/login', usersController.apiAuthenticate, usersController.show);
 
-router.post('/login', usersController.apiAuthenticate);
 
 
 router.post('/create', async function(req, res) {
