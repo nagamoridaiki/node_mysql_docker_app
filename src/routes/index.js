@@ -1,46 +1,19 @@
 const express = require('express');
 const { use } = require('../app');
 const router = express.Router();
-const db = require('../models');
 const usersController = require('./usersController');
 const apiRoutes = require("./apiRoutes");
 
-/* GET home page. *//*
-router.get('/', async function(req, res) {
-  const users = await db.User.findAll();
-  res.render('login', { title: 'Docker-Node.js', content: users });
-});*/
 router.use("/api", apiRoutes);
 
-router.get('/', usersController.index);
-router.post('/login', usersController.apiAuthenticate, usersController.show);
+router.get('/', usersController.login);
+router.get('/register', usersController.register);
+router.post('/create', usersController.create, usersController.indexView);
+
+router.post('/login', usersController.apiAuthenticate, usersController.index, usersController.indexView);
+
+router.get('/index',usersController.verifyJWT , usersController.index, usersController.indexView);
 
 
-
-router.post('/create', async function(req, res) {
-  const newTask = db.Task.build({
-    task: req.body.task,
-    done: false
-  });
-  await newTask.save();
-  res.redirect('/');
-});
-
-router.post('/update', async function(req, res) {
-  const task = await db.Task.findByPk(req.body.id);
-  if (task) {
-    task.done = !!(req.body.done);
-    await task.save();
-  }
-  res.redirect('/');
-});
-
-router.post('/delete', async function(req, res) {
-  const task = await db.Task.findByPk(req.body.id);
-  if (task) {
-    await task.destroy();
-  }
-  res.redirect('/');
-});
 
 module.exports = router;

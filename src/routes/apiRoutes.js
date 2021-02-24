@@ -4,5 +4,4 @@ const db = require('../models');
 const usersController = require('./usersController');
 
 
-
 module.exports = router;
