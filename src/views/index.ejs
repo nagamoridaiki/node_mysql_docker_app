@@ -1,25 +1,47 @@
-<h2 class="center">Index</h2>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% users.forEach(user => { %>
-    <tr>
-      <td>
-          <%= user.name %>
-      </td>
-      <td>
-        <%= user.email %>
-      </td>
-      <td>
-        <a href="<%=`/users/${user._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this record?')" a>Delete</a>
-      </td>
-    </tr>
-    <% }); %>
-  </tbody>
-</table>
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="content-type"
+        content="text/html; charset=UTF-8">
+    <title><%= title %></title>
+    <link rel="stylesheet" 
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+    crossorigin="anonymous">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+
+<body class="container">
+  <header>
+    <h1 class="display-4">
+      <%= title %></h1>
+  </header>
+  <div role="main">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+        <tr>
+          <td>
+              <%= user.name %>
+          </td>
+          <td>
+            <%= user.email %>
+          </td>
+          <td>
+            <a href="<%=`/users/${user._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this record?')" a>Delete</a>
+          </td>
+        </tr>
+        <% }); %>
+        <a href="<%=`/logout` %>">ログアウト</a>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
+

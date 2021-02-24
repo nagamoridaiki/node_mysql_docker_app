@@ -10,6 +10,7 @@ const usersController = require('./routes/usersController');
 const passport = require("passport");
 const session = require('express-session');
 const connectFlash = require("connect-flash");
+const layouts = require("express-ejs-layouts");
 
 var app = express();
 
@@ -27,6 +28,8 @@ app.use(session({
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(express.static("public"));
+app.use(layouts);
 
 app.use(logger('dev'));
 app.use(express.json());

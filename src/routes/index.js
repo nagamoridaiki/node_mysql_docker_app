@@ -13,7 +13,7 @@ router.post('/create', usersController.create, usersController.indexView);
 router.post('/login', usersController.apiAuthenticate, usersController.index, usersController.indexView);
 
 router.get('/index',usersController.verifyJWT , usersController.index, usersController.indexView);
-
+router.get('/logout', usersController.logout)
 
 
 module.exports = router;

@@ -10,11 +10,11 @@ const passport = require("passport");
 module.exports = {
     login: async (req, res, next) => {
         const users = await db.User.findAll();
-        res.render('login', { title: 'login', content: users });
+        res.render('layout', { layout_name: 'login', title: 'login', content: users });
     },
     register: async (req, res, next) => {
         const users = await db.User.findAll();
-        res.render('register', { title: 'Register', content: users });
+        res.render('layout', { layout_name: 'Register', title: 'Register', content: users });
     },
     index: (req, res, next) => {
       db.User.findAll()
@@ -28,7 +28,7 @@ module.exports = {
         });
     },
     indexView: (req, res) => {
-      res.render("index");
+      res.render("layout", { layout_name: 'index', title: 'Index' });
     },
     create: (req, res, next) => {
       const form = {
@@ -112,6 +112,10 @@ module.exports = {
             message: 'トークンがありません。',
         });
       }
-    }
+    },
+    logout: (req, res, next) => {
+      req.session.token = null;
+      res.redirect('/')
+    },
       
 }
