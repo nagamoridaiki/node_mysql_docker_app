@@ -47,7 +47,7 @@ module.exports = {
           console.log("payload", payload)//{ id: 1, name: 'Taro', password: 'yamada' }
           var token = jsonWebToken.sign(payload, 'secret');
           req.session.token = token;
-          res.redirect('/index')
+          res.redirect('/')
         })
         .catch(err=> {
           var data = {
@@ -58,6 +58,15 @@ module.exports = {
           res.render('error', data);
         })
         )
+    },
+    delete: (req, res, next) => {
+      db.sequelize.sync()
+      .then(() => db.User.destroy({
+        where:{id:req.body.id}
+      }))
+      .then(usr => {
+        res.redirect('/');
+      });
     },
     apiAuthenticate: async (req, res, next) => {
       await db.User.findOne({
@@ -107,15 +116,12 @@ module.exports = {
           }
         })
       } else {
-        return res.status(403).send({
-            success: false,
-            message: 'トークンがありません。',
-        });
+        res.redirect('/login')
       }
     },
     logout: (req, res, next) => {
       req.session.token = null;
-      res.redirect('/')
+      res.redirect('/login')
     },
       
 }

@@ -11,24 +11,12 @@
   </head>
 <body class="container">
   <header>
-    <h1 class="display-4">
-      <%= title %></h1>
+    <h2>
+      <%= title %></h2>
   </header>
   <div role="main">
-    <table class="table">
-        <% for(var i in content) { %>
-        <tr>
-          <% var obj = content[i]; %>
-          <th><%= obj.id %></th>
-          <td><%= obj.name %></td>
-          <td><%= obj.email %></td>
-          <td><%= obj.password %></td>
-        </tr>
-        <% } %>
-    </table>
     <div class="data-form">
       <form class="form-signin" action="/login" method="POST">
-        <h2 class="form-signin-heading">Login User</h2>
         <label for="inputEmail">Email address</label>
         <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required>
         <label for="inputPassword">Password</label>

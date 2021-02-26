@@ -5,9 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-const usersController = require('./routes/usersController');
-const passport = require("passport");
 const session = require('express-session');
 const connectFlash = require("connect-flash");
 const layouts = require("express-ejs-layouts");
@@ -43,10 +40,5 @@ app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-
-
-
 
 module.exports = app;
