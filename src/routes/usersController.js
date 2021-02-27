@@ -45,12 +45,12 @@ module.exports = {
             password : usr.password
           }
           console.log("payload", payload)//{ id: 1, name: 'Taro', password: 'yamada' }
-          var token = jsonWebToken.sign(payload, 'secret');
+          const token = jsonWebToken.sign(payload, 'secret');
           req.session.token = token;
           res.redirect('/')
         })
         .catch(err=> {
-          var data = {
+          const data = {
             title: 'Users/Add',
             form: form,
             err: err
@@ -82,10 +82,10 @@ module.exports = {
                 password : usr.password
               }
               console.log("payload", payload)//{ id: 1, name: 'Taro', password: 'yamada' }
-              var token = jsonWebToken.sign(payload, 'secret');
+              const token = jsonWebToken.sign(payload, 'secret');
               
               // トークンを返します。
-              let data = {
+              const data = {
                 success: true,
                 title: "Authentication successfully finished",
                 token: token,
@@ -103,7 +103,7 @@ module.exports = {
       successRedirect: "/users",
     }),
     verifyJWT: (req, res, next) => {
-      var token = req.session.token
+      const token = req.session.token
       if (token) {
         jsonWebToken.verify(token, 'secret', function(error, decoded) {
           if (error) {

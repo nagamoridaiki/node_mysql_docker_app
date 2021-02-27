@@ -1,15 +1,15 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var indexRouter = require('./routes/index');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const indexRouter = require('./routes/index');
 const session = require('express-session');
 const connectFlash = require("connect-flash");
 const layouts = require("express-ejs-layouts");
 
-var app = express();
+const app = express();
 
 app.use(session({
     secret: 'secret',
