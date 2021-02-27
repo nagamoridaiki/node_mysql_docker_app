@@ -5,16 +5,15 @@ const jsonWebToken = require('jsonwebtoken')
 const db = require('../models/index')
 const httpStatus = require('http-status');
 const passport = require("passport");
+const process = require('../config/process.js');
 
 
 module.exports = {
     login: async (req, res, next) => {
-        const users = await db.User.findAll();
-        res.render('layout', { layout_name: 'login', title: 'login', content: users });
+      res.render('layout', { layout_name: 'login', title: 'login'});
     },
     register: async (req, res, next) => {
-        const users = await db.User.findAll();
-        res.render('layout', { layout_name: 'Register', title: 'Register', content: users });
+      res.render('layout', { layout_name: 'Register', title: 'Register'});
     },
     index: (req, res, next) => {
       db.User.findAll()
@@ -23,8 +22,8 @@ module.exports = {
           next();
         })
         .catch(error => {
-          console.log(`Error fetching users: ${error.message}`);
-          next(error);
+          res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザー情報取得に失敗しました。'});
+          res.sendStatus(500)
         });
     },
     indexView: (req, res) => {
@@ -49,13 +48,9 @@ module.exports = {
           req.session.token = token;
           res.redirect('/')
         })
-        .catch(err=> {
-          const data = {
-            title: 'Users/Add',
-            form: form,
-            err: err
-          }
-          res.render('error', data);
+        .catch(error => {
+          res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザー作成に失敗しました。'});
+          res.sendStatus(500)
         })
         )
     },
@@ -66,6 +61,9 @@ module.exports = {
       }))
       .then(usr => {
         res.redirect('/');
+      }).catch(error => {
+        res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザー削除に失敗しました。'});
+        res.sendStatus(500)
       });
     },
     apiAuthenticate: async (req, res, next) => {
@@ -81,20 +79,12 @@ module.exports = {
                 email : usr.email,
                 password : usr.password
               }
-              console.log("payload", payload)//{ id: 1, name: 'Taro', password: 'yamada' }
-              const token = jsonWebToken.sign(payload, 'secret');
-              
-              // トークンを返します。
-              const data = {
-                success: true,
-                title: "Authentication successfully finished",
-                token: token,
-                content: usr
-              };
+              const token = jsonWebToken.sign(payload, process['JWT_SECRET']);
               req.session.token = token;
               next()
             } else {
-              res.render('error');
+              res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザーが見つかりませんでした。'});
+              res.sendStatus(500)
             }
         })
     },
@@ -105,7 +95,7 @@ module.exports = {
     verifyJWT: (req, res, next) => {
       const token = req.session.token
       if (token) {
-        jsonWebToken.verify(token, 'secret', function(error, decoded) {
+        jsonWebToken.verify(token, process['JWT_SECRET'], function(error, decoded) {
           if (error) {
             return res.json({ success: false, message: 'トークンの認証に失敗しました。' });
           } else {
@@ -122,6 +112,5 @@ module.exports = {
     logout: (req, res, next) => {
       req.session.token = null;
       res.redirect('/login')
-    },
-      
+    }, 
 }

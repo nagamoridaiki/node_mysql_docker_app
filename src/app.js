@@ -8,11 +8,12 @@ const indexRouter = require('./routes/index');
 const session = require('express-session');
 const connectFlash = require("connect-flash");
 const layouts = require("express-ejs-layouts");
+const process = require('./config/process.js');
 
 const app = express();
 
 app.use(session({
-    secret: 'secret',
+    secret: process['SESSION_SECRET'],
     resave: false,
     saveUninitialized: false,
     cookie:{
