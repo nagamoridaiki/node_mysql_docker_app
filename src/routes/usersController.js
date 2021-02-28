@@ -4,11 +4,67 @@ const User = require("../models/user")
 const jsonWebToken = require('jsonwebtoken')
 const db = require('../models/index')
 const httpStatus = require('http-status');
+const passport = require("passport");
+const process = require('../config/process.js');
+
 
 module.exports = {
-    index: async (req, res, next) => {
-        const users = await db.User.findAll();
-        res.render('login', { title: 'Docker-Node.js', content: users });
+    login: async (req, res, next) => {
+      res.render('layout', { layout_name: 'login', title: 'login'});
+    },
+    register: async (req, res, next) => {
+      res.render('layout', { layout_name: 'Register', title: 'Register'});
+    },
+    index: (req, res, next) => {
+      db.User.findAll()
+        .then(users => {
+          res.locals.users = users;
+          next();
+        })
+        .catch(error => {
+          res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザー情報取得に失敗しました。'});
+          res.sendStatus(500)
+        });
+    },
+    indexView: (req, res) => {
+      res.render("layout", { layout_name: 'index', title: 'Index' });
+    },
+    create: (req, res, next) => {
+      const form = {
+        name: req.body.name,
+        password: req.body.password,
+        email: req.body.email,
+      };
+      db.sequelize.sync()
+        .then(() => db.User.create(form)
+        .then(usr=> {
+          const payload = {
+            id : usr.id,
+            email : usr.email,
+            password : usr.password
+          }
+          console.log("payload", payload)//{ id: 1, name: 'Taro', password: 'yamada' }
+          const token = jsonWebToken.sign(payload, 'secret');
+          req.session.token = token;
+          res.redirect('/')
+        })
+        .catch(error => {
+          res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザー作成に失敗しました。'});
+          res.sendStatus(500)
+        })
+        )
+    },
+    delete: (req, res, next) => {
+      db.sequelize.sync()
+      .then(() => db.User.destroy({
+        where:{id:req.body.id}
+      }))
+      .then(usr => {
+        res.redirect('/');
+      }).catch(error => {
+        res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザー削除に失敗しました。'});
+        res.sendStatus(500)
+      });
     },
     apiAuthenticate: async (req, res, next) => {
       await db.User.findOne({
@@ -23,42 +79,38 @@ module.exports = {
                 email : usr.email,
                 password : usr.password
               }
-              console.log("payload", payload)//{ id: 1, name: 'Taro', password: 'yamada' }
-              var token = jsonWebToken.sign(payload, 'secret');
-
-              
-              jsonWebToken.verify(token, "secret", (errors, payload) => {
-                console.log("payload2", payload.id)
-                
-                if (payload) {
-                  console.log("OK! VERIFY JWT TOKEN", payload)
-                } else {
-                  res.status(httpStatus.UNAUTHORIZED).json({
-                    error: true,
-                    message: "Cannot verify API token."
-                  });
-                  next();
-                }
-              });
-
-              /*
-              // トークンを返します。
-              res.json({
-                success: true,
-                msg: "Authentication successfully finished",
-                token: token
-              });
-              next();*/
+              const token = jsonWebToken.sign(payload, process['JWT_SECRET']);
+              req.session.token = token;
+              next()
             } else {
-              var data = {
-                title:'Users/Login',
-                content:'名前かパスワードに問題があります。再度入力下さい。'
-              }
-              res.render('users/login', data);
+              res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザーが見つかりませんでした。'});
+              res.sendStatus(500)
             }
         })
     },
-
-
-
+    authenticate: passport.authenticate("local", {
+      failureRedirect: "/users/login",
+      successRedirect: "/users",
+    }),
+    verifyJWT: (req, res, next) => {
+      const token = req.session.token
+      if (token) {
+        jsonWebToken.verify(token, process['JWT_SECRET'], function(error, decoded) {
+          if (error) {
+            return res.json({ success: false, message: 'トークンの認証に失敗しました。' });
+          } else {
+            // 認証に成功したらdecodeされた情報をrequestに保存する
+            console.log("認証に成功しました")
+            req.decoded = decoded;
+            next();
+          }
+        })
+      } else {
+        res.redirect('/login')
+      }
+    },
+    logout: (req, res, next) => {
+      req.session.token = null;
+      res.redirect('/login')
+    }, 
 }
