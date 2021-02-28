@@ -81,6 +81,7 @@ module.exports = {
               }
               const token = jsonWebToken.sign(payload, process['JWT_SECRET']);
               req.session.token = token;
+              req.session.user = usr;
               next()
             } else {
               res.render('layout', { layout_name: 'error', title: 'ERROR', msg: 'ユーザーが見つかりませんでした。'});
