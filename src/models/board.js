@@ -23,8 +23,8 @@ module.exports = (sequelize, DataTypes) => {
   });
   Board.associate = function(models) {
     Board.belongsTo(models.User, {
-      foreignKey: 'id',
-      sourceKey: 'userId'
+      foreignKey: 'userId',
+      sourceKey: 'id'
     });
   };
   return Board;
