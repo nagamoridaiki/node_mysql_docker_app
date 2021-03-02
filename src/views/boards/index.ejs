@@ -19,20 +19,29 @@
     <p class="h4">Welcome to <%= data.login.name %>.</p>
     <form method="post" action="/boards/add">
       <div class="row">
-        <div class="col-10">
-        <input type="text" name="title" 
-            class="form-control">
+        <div class="col-10  input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">タイトル</span>
+          </div>
+            <input type="text" name="title" 
+                class="form-control">
         </div>
-        <div class="col-10">
-          <input type="text" name="msg" 
-            class="form-control">
+        <div class="col-10 input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">記事内容</span>
+          </div>
+          <textarea type="text" name="msg" class="form-control" rows="10"></textarea>
         </div>
-        <input type="submit" value="送信" 
-          class="btn btn-primary col-2">
+
+        <div>
+          <input type="submit" value="送信" 
+            class="btn btn-primary col-2">
+        </div>
       </div>
     </form>
 
-    <table class="table mt-5">
+    
+    <table class="table col-10">
       <% for(let i in data.content) { %>
       <%- include('data_item', {val:data.content[i]}) %>
       <% } %>
