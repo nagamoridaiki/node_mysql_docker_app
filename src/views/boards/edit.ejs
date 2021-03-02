@@ -20,7 +20,7 @@
         <% if (data.err!=null) { for (let i in data.err.errors) { %>
         <li><%= data.err.errors[i].message %></li>
         <% }} %>
-        <form method="post" action="/boards/add">
+        <form method="post" action="/boards/update/<%= data.board.id %>">
         <div class="row">
             <div class="col-10  input-group">
             <div class="input-group-prepend">

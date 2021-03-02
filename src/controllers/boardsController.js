@@ -70,7 +70,20 @@ module.exports = {
         });      
     },
     update: async (req, res, next) => {
-
+        const BoardId = req.params.id;
+        await db.Board.update({
+                title: req.body.title,
+                message: req.body.msg
+        },
+        {
+            where: { id: BoardId, }
+        }).then(() => {
+            res.redirect('/boards');
+        }
+        ).catch((err)=>{
+            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: '記事編集に失敗しました。'});
+            res.sendStatus(500)
+        })
     }
-
+    
 }
