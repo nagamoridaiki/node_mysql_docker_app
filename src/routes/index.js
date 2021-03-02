@@ -1,7 +1,7 @@
 const express = require('express');
 const { use } = require('../app');
 const router = express.Router();
-const usersController = require('./usersController');
+const usersController = require('../controllers/usersController');
 
 router.get('/login', usersController.login);
 router.get('/register', usersController.register);
