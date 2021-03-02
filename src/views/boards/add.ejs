@@ -40,8 +40,8 @@
           </div>
           <textarea type="text" name="msg" class="form-control" rows="10"></textarea>
           <ul class="text-danger">
-            <% if (data.err!=null) { for (let i in data.err.get("msg")) { %>
-            <li><%= data.err.get("msg")[i].message %></li>
+            <% if (data.err!=null) { for (let i in data.err.get("message")) { %>
+            <li><%= data.err.get("message")[i].message %></li>
             <% }} %>
           </ul> 
         </div>
