@@ -16,37 +16,15 @@
       <%= data.title %></h1>
   </header>
   <div role="main">
-    <p class="h4">Welcome to <%= data.login.name %>.</p>
-    <form method="post" action="/boards/add">
-      <div class="row">
-        <div class="col-10  input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">タイトル</span>
-          </div>
-            <input type="text" name="title" 
-                class="form-control">
-        </div>
-        <div class="col-10 input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">記事内容</span>
-          </div>
-          <textarea type="text" name="msg" class="form-control" rows="10"></textarea>
-        </div>
-
-        <div>
-          <input type="submit" value="送信" 
-            class="btn btn-primary col-2">
-        </div>
-      </div>
-    </form>
-
-    
+    <p class="h4">Welcome to <%= data.login.name %>.</p>    
     <table class="table col-10">
       <% for(let i in data.content) { %>
       <%- include('data_item', {val:data.content[i]}) %>
       <% } %>
     </table>
   </div>
+  <p class="h5"><a href="/">＜＜ユーザー一覧へ</a></p>
+
 </body>
 
 </html>

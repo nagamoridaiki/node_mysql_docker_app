@@ -8,11 +8,6 @@ const pnum = 10;
 
 // トップページ
 router.get('/',(req, res, next)=> {
-  res.redirect('/boards/0');
-});
-
-// トップページにページ番号をつけてアクセス
-router.get('/:page',(req, res, next)=> {
   db.Board.findAll({
     limit: pnum,
     order: [
@@ -28,9 +23,17 @@ router.get('/:page',(req, res, next)=> {
       login:req.session.user,
       content: board,
     }
-    console.log("board[0].User.nameの中身", board[1].User.name)
     res.render('layout', { layout_name: 'boards/index', data});
   });
+});
+
+router.get('/add',(req, res, next)=> {
+  const data = {
+    title: 'Boards/Add',
+    login:req.session.user,
+    err: null
+  }
+  res.render('layout', { layout_name: 'boards/add', data});
 });
 
 // メッセージフォームの送信処理
@@ -43,43 +46,36 @@ router.post('/add',(req, res, next)=> {
   db.sequelize.sync()
     .then(() => db.Board.create(form)
     .then(brd=>{
-      console.log("brd", brd)
       res.redirect('/boards');
     })
     .catch((err)=>{
+      const data = {
+        title: 'Boards',
+        login: req.session.user,
+        err: err,
+      }
       console.log("エラー", err)
-      res.redirect('/boards');
+      res.render('layout', { layout_name: 'boards/add', data});
     })
     )
 });
 
-// 利用者のホーム
-router.get('/home/:user/:id/:page',(req, res, next)=> {
-  if (check(req,res)){ return };
-  const id = req.params.id * 1;
-  const pg = req.params.page * 1;
-  db.Board.findAll({
-    where: {userId: id},
-    offset: pg * pnum,
-    limit: pnum,
-    order: [
-      ['createdAt', 'DESC']
-    ],
-    include: [{
-      model: db.User,
-      required: true
-    }]
-  }).then(brds => {
-    var data = {
-      title: 'Boards',
-      login:req.session.login,
-      userId:id,
-      userName:req.params.user,
-      content: brds,
-      page:pg
+router.get('/edit/:id',async (req, res, next)=> {
+  const BoardId = req.params.id;
+  await db.Board.findOne({
+    where:{
+      id: BoardId,
     }
-    res.render('boards/home', data);
+  }).then(board => {
+    const data = {
+      title: 'Boards/Edit',
+      login:req.session.user,
+      board: board,
+      err: null
+    }
+    res.render('layout', { layout_name: 'boards/edit', data});
   });
 });
+
 
 module.exports = router;
