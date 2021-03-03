@@ -4,6 +4,7 @@ const db = require('../models/index');
 const { Op } = require("sequelize");
 const User = require("../models/user")
 const Board = require("../models/board")
+const Like = require("../models/like")
 
 module.exports = {
     index: (req, res, next) => {
@@ -14,7 +15,7 @@ module.exports = {
             include: [{
                 model: db.User,
                 required: true
-            }]
+            }],
         }).then(board => {
             const data = {
                 title: 'Boards',
@@ -82,6 +83,6 @@ module.exports = {
             res.render('layout', { layout_name: 'error', title: 'ERROR', msg: '記事編集に失敗しました。' });
             res.sendStatus(500)
         })
-    }
+    },
 
 }
