@@ -18,72 +18,70 @@ module.exports = {
         }).then(board => {
             const data = {
                 title: 'Boards',
-                login:req.session.user,
+                login: req.session.user,
                 content: board,
             }
-            res.render('layout', { layout_name: 'boards/index', data});
+            res.render('layout', { layout_name: 'boards/index', data });
         });
     },
     add: (req, res, next) => {
         const data = {
             title: 'Boards/Add',
-            login:req.session.user,
+            login: req.session.user,
             err: null
         }
-        res.render('layout', { layout_name: 'boards/add', data});
+        res.render('layout', { layout_name: 'boards/add', data });
     },
     create: (req, res, next) => {
         const form = {
             userId: req.session.user.id,
             title: req.body.title,
-            message:req.body.msg
+            message: req.body.msg
         };
         db.sequelize.sync()
-        .then(() => db.Board.create(form)
-        .then(brd=>{
-            res.redirect('/boards');
-        })
-        .catch((err)=>{
-            const data = {
-                title: 'Boards',
-                login: req.session.user,
-                err: err,
-            }
-            res.render('layout', { layout_name: 'boards/add', data});
-        })
-        )
+            .then(() => db.Board.create(form)
+                .then(brd => {
+                    res.redirect('/boards');
+                })
+                .catch((err) => {
+                    const data = {
+                        title: 'Boards',
+                        login: req.session.user,
+                        err: err,
+                    }
+                    res.render('layout', { layout_name: 'boards/add', data });
+                })
+            )
     },
-    edit: async (req, res, next) => {
+    edit: async(req, res, next) => {
         const BoardId = req.params.id;
         await db.Board.findOne({
-          where:{
-            id: BoardId,
-          }
+            where: {
+                id: BoardId,
+            }
         }).then(board => {
-          const data = {
-            title: 'Boards/Edit',
-            login:req.session.user,
-            board: board,
-            err: null
-          }
-          res.render('layout', { layout_name: 'boards/edit', data});
-        });      
+            const data = {
+                title: 'Boards/Edit',
+                login: req.session.user,
+                board: board,
+                err: null
+            }
+            res.render('layout', { layout_name: 'boards/edit', data });
+        });
     },
-    update: async (req, res, next) => {
+    update: async(req, res, next) => {
         const BoardId = req.params.id;
         await db.Board.update({
-                title: req.body.title,
-                message: req.body.msg
-        },
-        {
+            title: req.body.title,
+            message: req.body.msg
+        }, {
             where: { id: BoardId, }
         }).then(() => {
             res.redirect('/boards');
-        }
-        ).catch((err)=>{
-            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: '記事編集に失敗しました。'});
+        }).catch((err) => {
+            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: '記事編集に失敗しました。' });
             res.sendStatus(500)
         })
     }
-    
+
 }
