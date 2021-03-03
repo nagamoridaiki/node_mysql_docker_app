@@ -22,6 +22,13 @@
                 <% if (val.User.id == data.login.id){ %>
                     <p><a href="/boards/edit/<%= val.id %>">編集する</a></p>
                     <% } %>
+                        <p>
+                            <form method="post" action="/boards/like">
+                                <input type="hidden" name="userId" value="<%= data.login.id %>">
+                                <input type="hidden" name="boardId" value="<%= val.id %>">
+                                <input type="submit" value="いいね" class="">
+                            </form>
+                        </p>
         </div>
     </div>
     <% } %>
