@@ -84,50 +84,5 @@ module.exports = {
             res.sendStatus(500)
         })
     },
-    like: async(req, res, next) => {
-        console.log("いいねボタンが押されました")
-            //いいねがついているかを判定する。
-        await db.Like.findOne({
-            where: {
-                userId: req.body.userId,
-                boardId: req.body.boardId,
-            }
-            //既にいいねがついている場合はいいねをはずす。
-        }).then(async(like) => {
 
-
-            if (like) {
-                console.log("既にいいねがついています", like)
-                    //既にいいねがついている場合はいいねをはずす。
-                await db.Like.destroy({
-                    where: {
-                        userId: req.body.userId,
-                        boardId: req.body.boardId,
-                    }
-                }).then(() => {
-                    res.redirect('/boards');
-                })
-            } else {
-                console.log("まだいいねがついていないのでこれから付けます。", like)
-                    //いいねをつける
-                const form = {
-                    userId: req.body.userId,
-                    boardId: req.body.boardId,
-                };
-                db.sequelize.sync()
-                    .then(() => db.Like.create(form)
-                        .then(() => {
-                            res.redirect('/boards');
-                        }).catch((err) => {
-                            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: '記事にいいねができませんでした。' });
-                            res.sendStatus(500)
-                        }));
-            }
-
-        }).catch(() => {
-            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: '記事にいいねができませんでした。' });
-            res.sendStatus(500)
-        });
-
-    }
 }
