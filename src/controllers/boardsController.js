@@ -12,10 +12,7 @@ module.exports = {
             order: [
                 ['createdAt', 'DESC']
             ],
-            include: [{
-                model: db.User,
-                required: true
-            }],
+            
         }).then(board => {
             const data = {
                 title: 'Boards',
@@ -94,10 +91,8 @@ module.exports = {
             }
             //既にいいねがついている場合はいいねをはずす。
         }).then(async(like) => {
-
-
             if (like) {
-                console.log("既にいいねがついています", like)
+                console.log("こちらのいいねを削除します", like)
                     //既にいいねがついている場合はいいねをはずす。
                 await db.Like.destroy({
                     where: {
@@ -109,22 +104,31 @@ module.exports = {
                 })
             } else {
                 console.log("まだいいねがついていないのでこれから付けます。", like)
+                const board = await db.Board.findOne({
+                        where: {
+                            id: req.body.boardId
+                        },
+                    })
                     //いいねをつける
                 const form = {
-                    userId: req.body.userId,
-                    boardId: req.body.boardId,
+                    id: req.body.userId,
                 };
                 db.sequelize.sync()
-                    .then(() => db.Like.create(form)
-                        .then(() => {
-                            res.redirect('/boards');
-                        }).catch((err) => {
-                            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: '記事にいいねができませんでした。' });
-                            res.sendStatus(500)
-                        }));
+                    .then(async() => {
+                        const User = await db.User.findOne(form);
+                        const Like = await board.setUser(User);
+
+                        return Like
+                    }).then(async () => {
+                        const Board = await db.Board.findAll();
+                        return res.status(200).json(Board)
+                    })
+                    .catch((err) => {
+                        res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
+                    });
             }
-        }).catch(() => {
-            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: '記事にいいねができませんでした。' });
+        }).catch((err) => {
+            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
             res.sendStatus(500)
         });
 

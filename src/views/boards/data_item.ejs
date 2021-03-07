@@ -8,7 +8,7 @@
                 <%= val.message %>
             </p>
             <p class="card-link">投稿者:
-                <%= val.User.name %>
+                
             </p>
             <%
         var d = new Date(val.createdAt);
@@ -19,7 +19,7 @@
                 <p>
                     <%= dstr %>
                 </p>
-                <% if (val.User.id == data.login.id){ %>
+                <% if (data.login.id == data.login.id){ %>
                     <p><a href="/boards/edit/<%= val.id %>">編集する</a></p>
                     <% } %>
                         <p>
