@@ -8,12 +8,8 @@ const Like = require("../models/like")
 
 module.exports = {
     index: (req, res, next) => {
-        db.Board.findAll({
-            order: [
-                ['createdAt', 'DESC']
-            ],
-            
-        }).then(board => {
+        db.Board.findAll()
+        .then(board => {
             const data = {
                 title: 'Boards',
                 login: req.session.user,
@@ -32,7 +28,7 @@ module.exports = {
     },
     create: (req, res, next) => {
         const form = {
-            userId: req.session.user.id,
+            user_id: req.session.user.id,
             title: req.body.title,
             message: req.body.msg
         };
@@ -86,8 +82,8 @@ module.exports = {
             //いいねがついているかを判定する。
         await db.Like.findOne({
             where: {
-                userId: req.body.userId,
-                boardId: req.body.boardId,
+                like_user_id: req.body.userId,
+                like_board_id: req.body.boardId,
             }
             //既にいいねがついている場合はいいねをはずす。
         }).then(async(like) => {
@@ -96,8 +92,8 @@ module.exports = {
                     //既にいいねがついている場合はいいねをはずす。
                 await db.Like.destroy({
                     where: {
-                        userId: req.body.userId,
-                        boardId: req.body.boardId,
+                        like_user_id: req.body.userId,
+                        like_board_id: req.body.boardId,
                     }
                 }).then(() => {
                     res.redirect('/boards');
@@ -119,7 +115,7 @@ module.exports = {
                         const Like = await board.setUser(User);
 
                         return Like
-                    }).then(async () => {
+                    }).then(async (Like) => {
                         const Board = await db.Board.findAll();
                         return res.status(200).json(Board)
                     })

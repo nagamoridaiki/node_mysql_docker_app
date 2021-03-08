@@ -1,20 +1,7 @@
 'use strict';
-const {
-    Model
-} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Board extends Model {
-        /**
-         * Helper method for defining associations.
-         * This method is not a part of Sequelize lifecycle.
-         * The `models/index` file will call this method automatically.
-         */
-        static associate(models) {
-            // define association here
-        }
-    };
-    Board.init({
-        userId: {
+    const Board = sequelize.define('Board', {
+        user_id: {
             type: DataTypes.INTEGER,
             validate: {
                 notEmpty: {
@@ -38,23 +25,17 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             validate: {
                 notEmpty: {
-                    msg: "本文は必須です。"
-                },
-                len: {
-                    args: [1, 140],
-                    msg: "1〜140字以内で入力してください"
+                    msg: "メッセージは必須です。"
                 }
             }
         }
-    }, {
-        sequelize,
-        modelName: 'Board',
-    });
+    }, {});
     Board.associate = function(models) {
+        //Board.belongsTo(models.User);
         Board.belongsToMany(models.User, {
             through: 'Like',
             as: 'User',
-            foreignKey: 'boardId'
+            foreignKey: 'like_board_id'
         });
     };
     return Board;
