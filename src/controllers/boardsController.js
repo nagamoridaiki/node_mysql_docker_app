@@ -8,7 +8,15 @@ const Like = require("../models/like")
 
 module.exports = {
     index: (req, res, next) => {
-        db.Board.findAll()
+        db.Board.findAll({
+            order: [
+                ['createdAt', 'DESC']
+              ],
+            include: [{
+                model: db.User,
+                required: true
+            }]
+        })
         .then(board => {
             const data = {
                 title: 'Boards',
@@ -28,7 +36,7 @@ module.exports = {
     },
     create: (req, res, next) => {
         const form = {
-            user_id: req.session.user.id,
+            userId: req.session.user.id,
             title: req.body.title,
             message: req.body.msg
         };
@@ -82,8 +90,8 @@ module.exports = {
             //いいねがついているかを判定する。
         await db.Like.findOne({
             where: {
-                like_user_id: req.body.userId,
-                like_board_id: req.body.boardId,
+                userId: req.body.userId,
+                boardId: req.body.boardId,
             }
             //既にいいねがついている場合はいいねをはずす。
         }).then(async(like) => {
@@ -92,8 +100,8 @@ module.exports = {
                     //既にいいねがついている場合はいいねをはずす。
                 await db.Like.destroy({
                     where: {
-                        like_user_id: req.body.userId,
-                        like_board_id: req.body.boardId,
+                        userId: req.body.userId,
+                        boardId: req.body.boardId,
                     }
                 }).then(() => {
                     res.redirect('/boards');
@@ -117,7 +125,7 @@ module.exports = {
                         return Like
                     }).then(async (Like) => {
                         const Board = await db.Board.findAll();
-                        return res.status(200).json(Board)
+                        return res.status(200).json(Like)
                     })
                     .catch((err) => {
                         res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
