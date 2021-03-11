@@ -8,7 +8,10 @@
                 <%= val.message %>
             </p>
             <p class="card-link">投稿者:
-                <%= val.User.name %>
+                
+            </p>
+            <p>いいねした人
+                <%= val.User.length %>
             </p>
             <%
         var d = new Date(val.createdAt);

@@ -9,15 +9,12 @@ const Like = require("../models/like")
 module.exports = {
     index: (req, res, next) => {
         db.Board.findAll({
+            include: 'User',
             order: [
-                ['createdAt', 'DESC']
+                ['id', 'DESC']
               ],
-            include: [{
-                model: db.User,
-                required: true
-            }]
         })
-        .then(board => {
+        .then(async(board) => {
             const data = {
                 title: 'Boards',
                 login: req.session.user,
@@ -86,7 +83,6 @@ module.exports = {
         })
     },
     like: async(req, res, next) => {
-        console.log("いいねボタンが押されました")
             //いいねがついているかを判定する。
         await db.Like.findOne({
             where: {
@@ -96,7 +92,7 @@ module.exports = {
             //既にいいねがついている場合はいいねをはずす。
         }).then(async(like) => {
             if (like) {
-                console.log("こちらのいいねを削除します", like)
+                console.log("Like delete !!!!!")
                     //既にいいねがついている場合はいいねをはずす。
                 await db.Like.destroy({
                     where: {
@@ -107,25 +103,17 @@ module.exports = {
                     res.redirect('/boards');
                 })
             } else {
-                console.log("まだいいねがついていないのでこれから付けます。", like)
-                const board = await db.Board.findOne({
-                        where: {
-                            id: req.body.boardId
-                        },
-                    })
+                console.log("Like make it !!!!!")
                     //いいねをつける
                 const form = {
-                    id: req.body.userId,
+                    userId: req.body.userId,
+                    boardId: req.body.boardId,
                 };
                 db.sequelize.sync()
                     .then(async() => {
-                        const User = await db.User.findOne(form);
-                        const Like = await board.setUser(User);
-
-                        return Like
-                    }).then(async (Like) => {
-                        const Board = await db.Board.findAll();
-                        return res.status(200).json(Like)
+                        await db.Like.create(form);
+                    }).then(() => {
+                        res.redirect('/boards');
                     })
                     .catch((err) => {
                         res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });

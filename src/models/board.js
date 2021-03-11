@@ -51,15 +51,11 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Board',
   });
   Board.associate = function(models) {
-    Board.belongsTo(models.User, {
-      foreignKey: 'userId',
-      sourceKey: 'id'
-    });
-    /*Board.belongsToMany(models.User, {
-        through: models.Like,
+    Board.belongsToMany(models.User, {
+        through: 'Like',
         as: 'User',
         foreignKey: 'boardId'
-    });*/
+    });
   };
   return Board;
 };
