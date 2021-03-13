@@ -83,13 +83,23 @@ module.exports = {
         })
     },
     delete: async(req, res, next) => {
-        db.Board.destroy({
-            where:{id: req.params.id}
+        db.sequelize.sync()
+        .then(async() => {
+            const borad_id = req.params.id;
+            await db.Board.destroy({
+                where:{id: borad_id}
+            })
+            return borad_id;
+        }).then(async(borad_id) => {
+            await db.Like.destroy({
+                where:{boardId: borad_id}
+            })
         }).then(() => {
             res.redirect('/boards');
-        }).catch(err => {
+        }).catch((err) => {
             res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
-        })
+        });
+
     },
     like: async(req, res, next) => {
             //いいねがついているかを判定する。
