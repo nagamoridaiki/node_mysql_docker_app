@@ -10,28 +10,38 @@
             <p class="card-link">投稿者:
                 
             </p>
-            <p>いいねした人
-                <%= val.User.length %>
+            <p>
+            <% 
+            hart_color = false;
+            for(let i in val.User) { 
+                if (val.User[i].id == login.id){
+                    hart_color = true;
+                };
+            };
+                %>
+            <%if (hart_color == true) {%><p><span style="color:#FF0000" id="hearts">&hearts;</span> <%= val.User.length %></p><% } %>
+            <%if (hart_color == false) {%><p><span style="color:#888888" id="hearts">&hearts;</span> <%= val.User.length %></p><% } %>
             </p>
             <%
-        var d = new Date(val.createdAt);
-        var dstr = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + 
-          d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + 
-          ':' + d.getSeconds();
-      %>
-                <p>
-                    <%= dstr %>
-                </p>
-                <% if (data.login.id == data.login.id){ %>
-                    <p><a href="/boards/edit/<%= val.id %>">編集する</a></p>
-                    <% } %>
-                        <p>
-                            <form method="post" action="/boards/like">
-                                <input type="hidden" name="userId" value="<%= data.login.id %>">
-                                <input type="hidden" name="boardId" value="<%= val.id %>">
-                                <input type="submit" value="いいね" class="">
-                            </form>
-                        </p>
+                var d = new Date(val.createdAt);
+                var dstr = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + 
+                d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + 
+                ':' + d.getSeconds();
+            %>
+            <p>
+                <%= dstr %>
+            </p>
+            <% if (data.login.id == data.login.id){ %>
+                <p><a href="/boards/edit/<%= val.id %>">編集する</a></p>
+                <p><a href="/boards/delete/<%= val.id %>">削除する</a></p>
+            <% } %>
+            <p>
+                <form method="post" action="/boards/like">
+                    <input type="hidden" name="userId" value="<%= data.login.id %>">
+                    <input type="hidden" name="boardId" value="<%= val.id %>">
+                    <input type="submit" value="いいね" class="">
+                </form>
+            </p>
         </div>
     </div>
     <% } %>

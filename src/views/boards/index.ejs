@@ -19,12 +19,11 @@
     <p class="h4">Welcome to <%= data.login.name %>.</p>    
     <table class="table col-10">
       <% for(let i in data.content) { %>
-      <%- include('data_item', {val:data.content[i]}) %>
+      <%- include('data_item', {val:data.content[i], login:data.login}) %>
       <% } %>
     </table>
   </div>
   <p class="h5"><a href="/">＜＜ユーザー一覧へ</a></p>
 
 </body>
-
 </html>

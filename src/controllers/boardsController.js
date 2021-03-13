@@ -82,6 +82,15 @@ module.exports = {
             res.sendStatus(500)
         })
     },
+    delete: async(req, res, next) => {
+        db.Board.destroy({
+            where:{id: req.params.id}
+        }).then(() => {
+            res.redirect('/boards');
+        }).catch(err => {
+            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
+        })
+    },
     like: async(req, res, next) => {
             //いいねがついているかを判定する。
         await db.Like.findOne({
