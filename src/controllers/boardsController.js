@@ -103,45 +103,34 @@ module.exports = {
     },
     like: async(req, res, next) => {
             //いいねがついているかを判定する。
-        await db.Like.findOne({
-            where: {
-                userId: req.body.userId,
-                boardId: req.body.boardId,
-            }
-            //既にいいねがついている場合はいいねをはずす。
-        }).then(async(like) => {
-            if (like) {
-                console.log("Like delete !!!!!")
-                    //既にいいねがついている場合はいいねをはずす。
-                await db.Like.destroy({
-                    where: {
-                        userId: req.body.userId,
-                        boardId: req.body.boardId,
-                    }
-                }).then(() => {
-                    res.redirect('/boards');
-                })
-            } else {
-                console.log("Like make it !!!!!")
-                    //いいねをつける
-                const form = {
-                    userId: req.body.userId,
-                    boardId: req.body.boardId,
-                };
-                db.sequelize.sync()
-                    .then(async() => {
-                        await db.Like.create(form);
-                    }).then(() => {
-                        res.redirect('/boards');
-                    })
-                    .catch((err) => {
-                        res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
-                    });
-            }
-        }).catch((err) => {
-            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
-            res.sendStatus(500)
-        });
-
+        const form = {
+            userId: req.body.userId,
+            boardId: req.body.boardId,
+        };
+        const like =  await db.Like.findOne({
+            where: form
+        })
+        if (like) {
+            //既にいいねがついている場合、いいねを外す。
+            await db.Like.destroy({
+                where: form
+            })
+            .then(() => {
+                res.redirect('/boards');
+            })
+            .catch((err) => {
+                res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
+            });
+        } else {
+            //いいねがついていない場合、いいねをつける。
+            await db.Like.create(form)
+            .then(() => {
+                res.redirect('/boards');
+            })
+            .catch((err) => {
+                res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
+            });
+        }
     }
+    
 }

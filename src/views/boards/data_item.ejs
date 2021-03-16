@@ -9,8 +9,8 @@
             </p>
             <%= dstr %>
             <% if (data.login.id == data.login.id){ %>
-                <p><button href="/boards/edit/<%= val.id %>">編集する</button>
-                <button href="/boards/delete/<%= val.id %>">削除する</button></p>
+                <p><a href="/boards/edit/<%= val.id %>">編集する</a>
+                <a href="/boards/delete/<%= val.id %>">削除する</a></p>
             <% } %>
             <p>
                 <form method="post" action="/boards/like">
