@@ -9,19 +9,19 @@ const Like = require("../models/like")
 module.exports = {
     index: (req, res, next) => {
         db.Board.findAll({
-            include: 'User',
-            order: [
-                ['id', 'DESC']
-              ],
-        })
-        .then(async(board) => {
-            const data = {
-                title: 'Boards',
-                login: req.session.user,
-                content: board,
-            }
-            res.render('layout', { layout_name: 'boards/index', data });
-        });
+                include: 'User',
+                order: [
+                    ['id', 'DESC']
+                ],
+            })
+            .then(async(board) => {
+                const data = {
+                    title: 'Boards',
+                    login: req.session.user,
+                    content: board,
+                }
+                res.render('layout', { layout_name: 'boards/index', data });
+            });
     },
     add: (req, res, next) => {
         const data = {
@@ -84,53 +84,53 @@ module.exports = {
     },
     delete: async(req, res, next) => {
         db.sequelize.sync()
-        .then(async() => {
-            const borad_id = req.params.id;
-            await db.Board.destroy({
-                where:{id: borad_id}
-            })
-            return borad_id;
-        }).then(async(borad_id) => {
-            await db.Like.destroy({
-                where:{boardId: borad_id}
-            })
-        }).then(() => {
-            res.redirect('/boards');
-        }).catch((err) => {
-            res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
-        });
+            .then(async() => {
+                const borad_id = req.params.id;
+                await db.Board.destroy({
+                    where: { id: borad_id }
+                })
+                return borad_id;
+            }).then(async(borad_id) => {
+                await db.Like.destroy({
+                    where: { boardId: borad_id }
+                })
+            }).then(() => {
+                res.redirect('/boards');
+            }).catch((err) => {
+                res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
+            });
 
     },
     like: async(req, res, next) => {
-            //いいねがついているかを判定する。
+        //いいねがついているかを判定する。
         const form = {
             userId: req.body.userId,
             boardId: req.body.boardId,
         };
-        const like =  await db.Like.findOne({
+        const like = await db.Like.findOne({
             where: form
         })
         if (like) {
             //既にいいねがついている場合、いいねを外す。
             await db.Like.destroy({
-                where: form
-            })
-            .then(() => {
-                res.redirect('/boards');
-            })
-            .catch((err) => {
-                res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
-            });
+                    where: form
+                })
+                .then(() => {
+                    res.redirect('/boards');
+                })
+                .catch((err) => {
+                    res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
+                });
         } else {
             //いいねがついていない場合、いいねをつける。
             await db.Like.create(form)
-            .then(() => {
-                res.redirect('/boards');
-            })
-            .catch((err) => {
-                res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
-            });
+                .then(() => {
+                    res.redirect('/boards');
+                })
+                .catch((err) => {
+                    res.render('layout', { layout_name: 'error', title: 'ERROR', msg: err });
+                });
         }
     }
-    
+
 }
