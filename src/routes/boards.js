@@ -12,6 +12,8 @@ router.get('/', usersController.verifyJWT, boardsController.index);
 router.get('/add', usersController.verifyJWT, boardsController.add);
 router.post('/add', usersController.verifyJWT, boardsController.create);
 router.get('/edit/:id', usersController.verifyJWT, boardsController.edit);
+router.get('/delete/:id', usersController.verifyJWT, boardsController.delete);
 router.post('/update/:id', usersController.verifyJWT, boardsController.update);
+router.post('/like/', usersController.verifyJWT, boardsController.like);
 
 module.exports = router;

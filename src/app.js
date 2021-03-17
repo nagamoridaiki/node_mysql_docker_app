@@ -17,12 +17,12 @@ app.use(session({
     secret: process['SESSION_SECRET'],
     resave: false,
     saveUninitialized: false,
-    cookie:{
-    httpOnly: true,
-    secure: false,
-    maxage: 1000 * 60 * 30
+    cookie: {
+        httpOnly: true,
+        secure: false,
+        maxage: 1000 * 60 * 30
     }
-  }));
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(connectFlash());
 
 // body parserの設定
-app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/', indexRouter);

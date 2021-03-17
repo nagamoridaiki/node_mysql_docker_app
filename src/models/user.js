@@ -22,9 +22,11 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'User',
     });
     User.associate = function(models) {
-        User.hasMany(models.Board, {
-            foreignKey: 'userId',
-            sourceKey: 'id'
+
+        User.belongsToMany(models.Board, {
+            through: 'Like',
+            as: 'Board',
+            foreignKey: 'userId'
         });
     };
     return User;
